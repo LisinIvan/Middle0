@@ -28,14 +28,15 @@ namespace Middle0.Persistence.Repositories
 
 		public async Task<bool> DeleteEventEntity(int eventId)
 		{
-			EventEntities eventEntity = await _context.Events.FirstOrDefaultAsync(s =>s.Id == eventId);
+			EventEntities eventEntity = await _context.Events.FirstOrDefaultAsync(s => s.Id == eventId);
 			if (eventEntity != null)
 			{
 				_context.Events.Remove(eventEntity);
 				await _context.SaveChangesAsync();
 				return true;
 			}
-			throw new ExceptionDelete("Something wrong :)");
+			return false;
+			//hrow new ExceptionDelete("Something wrong :)");
 		}
 
 		public async Task<List<EventEntities>> GetAllEventEntitiesAsync()
@@ -45,18 +46,23 @@ namespace Middle0.Persistence.Repositories
 
 		public async Task UpdateEventEntity(EventEntities entity)
 		{
-			EventEntities eventEntity = await _context.Events.FirstOrDefaultAsync(s=>s.Id == entity.Id);
-			if (eventEntity != null)
-			{
+			EventEntities eventEntity = await _context.Events.FirstOrDefaultAsync(s => s.Id == entity.Id);
+			//if (eventEntity != null)
+			//{
 				eventEntity.Name = entity.Name;
 				eventEntity.Description = entity.Description;
 				eventEntity.Category = entity.Category;
 				await _context.SaveChangesAsync();
-			}
+			//}
 		}
 		public async Task<EventEntities> GetEventEntitiesByNameAsync(string name)
 		{
 			EventEntities eventEntity = await _context.Events.Where(c => c.Name == name).FirstOrDefaultAsync();
+			return eventEntity;
+		}
+		public async Task<EventEntities> GetEventById(int id)
+		{
+			EventEntities eventEntity = await _context.Events.FirstOrDefaultAsync(s => s.Id == id);
 			return eventEntity;
 		}
 	}

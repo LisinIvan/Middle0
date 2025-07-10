@@ -8,8 +8,9 @@ namespace Middle0.Application.Service.Interfaces
     {
 		Task<List<EventEntities>> GetAllEventEntitiesAsync();
 		Task AddEventEntity(EventEntities entity);
-		Task UpdateEventEntity(EventEntities entity);
+		Task<bool> UpdateEventEntity(EventEntities entity);
 		Task<bool> DeleteEventEntity(int eventId);
 		Task<EventEntities> GetEventEntitiesByNameAsync(string name);
+
 	}
 }

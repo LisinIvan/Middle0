@@ -9,5 +9,6 @@ namespace Middle0.Persistence.Repositories.Interfaces
         Task UpdateEventEntity (EventEntities entity);
         Task<bool> DeleteEventEntity (int eventId);
         Task<EventEntities> GetEventEntitiesByNameAsync(string name);
+        Task<EventEntities> GetEventById(int id);
     }
 }

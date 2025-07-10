@@ -34,9 +34,14 @@ namespace Middle0.Application.Service
 			return await _eventRepository.GetEventEntitiesByNameAsync(name);
 		}
 
-		public async Task UpdateEventEntity(EventEntities entity)
+		public async Task<bool> UpdateEventEntity(EventEntities entity)
 		{
-			await _eventRepository.UpdateEventEntity(entity);
+			if (_eventRepository.GetEventById(entity.Id) != null)
+			{
+				await _eventRepository.UpdateEventEntity(entity);
+				return true;
+			}
+			return false;
 		}
 	}
 }

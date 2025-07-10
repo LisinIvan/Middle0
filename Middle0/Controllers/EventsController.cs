@@ -6,12 +6,11 @@ namespace Middle0.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class EventsController : Controller
+	[ProducesResponseType(typeof(EventEntities), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+	public class EventsController : Controller
     {
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
 
 		private readonly IEventEntitiesService _eventService;
 
@@ -48,14 +47,29 @@ namespace Middle0.Controllers
 
 		// PUT: api/EventEntities
 		[HttpPut]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async Task<IActionResult> Update([FromBody] EventEntities entity)
 		{
-			await _eventService.UpdateEventEntity(entity);
-			return Ok();
+			//await _eventService.UpdateEventEntity(entity);
+			//return Ok();
+			try
+			{
+				var success = await _eventService.UpdateEventEntity(entity);
+
+				if (!success)
+					return NotFound($"Событие с ID {entity.Id} не найдено или не удалось обновить.");
+
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+			}
 		}
 
 		// DELETE: api/EventEntities/{id}
 		[HttpDelete("{id}")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async Task<IActionResult> Delete(int id)
 		{
 			var result = await _eventService.DeleteEventEntity(id);
