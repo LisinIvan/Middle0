@@ -7,8 +7,10 @@ namespace Middle0.Domain.Entities
         [Key]
         public int Id { get; set; }
 		[Required]
+		[StringLength(100, MinimumLength = 3)]
 		public string Category { get; set; } = null!;
 		[Required]
+		[StringLength(100, MinimumLength = 3)]
 		public string Name { get; set; } = null!;
 		public string Images { get; set; } = null!;
 		public string Description { get; set; } = null!;

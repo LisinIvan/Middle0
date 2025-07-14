@@ -1,7 +1,9 @@
 ﻿
 using Middle0.Application.Service.Interfaces;
 using Middle0.Domain.Entities;
+using Middle0.Persistence.Repositories;
 using Middle0.Persistence.Repositories.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace Middle0.Application.Service
 {
@@ -14,9 +16,27 @@ namespace Middle0.Application.Service
 			_eventRepository = eventRepository;
 		}
 
-		public async Task AddEventEntity(EventEntities entity)
+		public async Task<bool> AddEventEntity(EventEntities entity)
 		{
+			var context = new ValidationContext(entity);
+			var results = new List<ValidationResult>();
+
+			bool isValid = Validator.TryValidateObject(entity, context, results, true);
+
+			if (!isValid)
+			{
+				string errorMessages = string.Join("; ", results.Select(r => r.ErrorMessage));
+				throw new ArgumentException("Validation failed: " + errorMessages);
+			}
+
+			var existing = await _eventRepository.GetEventEntitiesByNameAsync(entity.Name);
+			if (existing != null)
+				return false;
+
 			await _eventRepository.AddEventEntity(entity);
+			return true;
+
+			//return await _eventRepository.AddEventEntity(entity);
 		}
 
 		public async Task<bool> DeleteEventEntity(int eventId)
@@ -42,6 +62,10 @@ namespace Middle0.Application.Service
 				return true;
 			}
 			return false;
+		}
+		public async Task<EventEntities> GetEventEntitiesById(int id)
+		{
+			return await _eventRepository.GetEventById(id);
 		}
 	}
 }

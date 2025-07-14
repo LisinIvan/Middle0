@@ -4,19 +4,21 @@ using Middle0.Domain.Entities;
 
 namespace Middle0.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
+	[ApiController]
+	[Route("api/[controller]")]
 	[ProducesResponseType(typeof(EventEntities), StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public class EventsController : Controller
-    {
+	{
 
 		private readonly IEventEntitiesService _eventService;
+		private readonly ILogger<EventsController> _logger;
 
-		public EventsController(IEventEntitiesService eventService)
+		public EventsController(IEventEntitiesService eventService, ILogger<EventsController> logger)
 		{
 			_eventService = eventService;
+			_logger = logger;
 		}
 
 		// GET: api/EventEntities
@@ -25,6 +27,24 @@ namespace Middle0.Controllers
 		{
 			var result = await _eventService.GetAllEventEntitiesAsync();
 			return Ok(result);
+		}
+
+		//GET: api/EventEntities/{id}}
+		[HttpGet("{id}")]
+		public async Task<ActionResult<EventEntities>> GetById(int id)
+		{
+			try
+			{
+				var result = _eventService.GetEventEntitiesById(id);
+				if (result == null)
+					return NotFound($"EventEntity with ID {id} not found.");
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error with GetById, where id = {id}", id);
+				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+			}
 		}
 
 		// GET: api/EventEntities/name/SomeName
@@ -41,8 +61,18 @@ namespace Middle0.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Create([FromBody] EventEntities entity)
 		{
-			await _eventService.AddEventEntity(entity);
-			return Ok();
+			try
+			{
+				bool added = await _eventService.AddEventEntity(entity);
+
+				if (added)
+					return Ok(new { message = "Событие успешно создано" });
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+			return Conflict(new { message = "Событие с таким именем уже существует" });
 		}
 
 		// PUT: api/EventEntities

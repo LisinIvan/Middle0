@@ -12,8 +12,8 @@ using Middle0.Persistence.Context;
 namespace Middle0.Persistence.Migrations
 {
     [DbContext(typeof(EventDbContext))]
-    [Migration("20250707094246_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250714020725_EventDB")]
+    partial class EventDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,7 +39,8 @@ namespace Middle0.Persistence.Migrations
 
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -54,7 +55,8 @@ namespace Middle0.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Place")
                         .IsRequired()

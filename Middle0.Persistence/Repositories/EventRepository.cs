@@ -14,7 +14,7 @@ namespace Middle0.Persistence.Repositories
 			_context = context;
 		}
 
-		public async Task AddEventEntity(EventEntities entity)
+		public async Task<bool> AddEventEntity(EventEntities entity)
 		{
 			EventEntities eventEntity = await GetEventEntitiesByNameAsync(entity.Name);
 			if (eventEntity == null)
@@ -23,7 +23,9 @@ namespace Middle0.Persistence.Repositories
 				Console.WriteLine(entry.State);
 				await _context.Events.AddAsync(entity);
 				await _context.SaveChangesAsync();
+				return true;
 			}
+			return false;
 		}
 
 		public async Task<bool> DeleteEventEntity(int eventId)
@@ -44,16 +46,18 @@ namespace Middle0.Persistence.Repositories
 			return await _context.Events.ToListAsync();
 		}
 
-		public async Task UpdateEventEntity(EventEntities entity)
+		public async Task<bool> UpdateEventEntity(EventEntities entity)
 		{
 			EventEntities eventEntity = await _context.Events.FirstOrDefaultAsync(s => s.Id == entity.Id);
-			//if (eventEntity != null)
-			//{
+			if (eventEntity != null)
+			{
 				eventEntity.Name = entity.Name;
 				eventEntity.Description = entity.Description;
 				eventEntity.Category = entity.Category;
 				await _context.SaveChangesAsync();
-			//}
+				return true;
+			}
+			return false;
 		}
 		public async Task<EventEntities> GetEventEntitiesByNameAsync(string name)
 		{
