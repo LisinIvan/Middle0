@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Middle0.Domain.Entities;
 using Middle0.Persistence.Context;
-using Middle0.Persistence.ExceptionsRepository;
 using Middle0.Persistence.Repositories.Interfaces;
 
 namespace Middle0.Persistence.Repositories

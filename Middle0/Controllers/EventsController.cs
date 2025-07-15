@@ -23,6 +23,7 @@ namespace Middle0.Controllers
 
 		// GET: api/EventEntities
 		[HttpGet]
+		[ProducesResponseType(typeof(List<EventEntities>), StatusCodes.Status200OK)]
 		public async Task<ActionResult<List<EventEntities>>> GetAll()
 		{
 			var result = await _eventService.GetAllEventEntitiesAsync();
@@ -31,6 +32,7 @@ namespace Middle0.Controllers
 
 		//GET: api/EventEntities/{id}}
 		[HttpGet("{id}")]
+		[ProducesResponseType(typeof(EventEntities), StatusCodes.Status200OK)]
 		public async Task<ActionResult<EventEntities>> GetById(int id)
 		{
 			try
@@ -49,6 +51,7 @@ namespace Middle0.Controllers
 
 		// GET: api/EventEntities/name/SomeName
 		[HttpGet("name/{name}")]
+		[ProducesResponseType(typeof(EventEntities), StatusCodes.Status200OK)]
 		public async Task<ActionResult<EventEntities>> GetByName(string name)
 		{
 			var result = await _eventService.GetEventEntitiesByNameAsync(name);
@@ -59,6 +62,7 @@ namespace Middle0.Controllers
 
 		// POST: api/EventEntities
 		[HttpPost]
+		[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
 		public async Task<IActionResult> Create([FromBody] EventEntities entity)
 		{
 			try
