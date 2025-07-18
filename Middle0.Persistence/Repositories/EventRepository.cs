@@ -13,9 +13,9 @@ namespace Middle0.Persistence.Repositories
 			_context = context;
 		}
 
-		public async Task<bool> AddEventEntity(EventEntities entity)
+		public async Task<bool> AddEventEntity(Event entity)
 		{
-			EventEntities eventEntity = await GetEventEntitiesByNameAsync(entity.Name);
+			Event eventEntity = await GetEventEntitiesByNameAsync(entity.Name);
 			if (eventEntity == null)
 			{
 				var entry = _context.Entry(entity);
@@ -29,7 +29,7 @@ namespace Middle0.Persistence.Repositories
 
 		public async Task<bool> DeleteEventEntity(int eventId)
 		{
-			EventEntities eventEntity = await _context.Events.FirstOrDefaultAsync(s => s.Id == eventId);
+			Event eventEntity = await _context.Events.FirstOrDefaultAsync(s => s.Id == eventId);
 			if (eventEntity != null)
 			{
 				_context.Events.Remove(eventEntity);
@@ -40,14 +40,14 @@ namespace Middle0.Persistence.Repositories
 			//hrow new ExceptionDelete("Something wrong :)");
 		}
 
-		public async Task<List<EventEntities>> GetAllEventEntitiesAsync()
+		public async Task<List<Event>> GetAllEventEntitiesAsync()
 		{
 			return await _context.Events.ToListAsync();
 		}
 
-		public async Task<bool> UpdateEventEntity(EventEntities entity)
+		public async Task<bool> UpdateEventEntity(Event entity)
 		{
-			EventEntities eventEntity = await _context.Events.FirstOrDefaultAsync(s => s.Id == entity.Id);
+			Event eventEntity = await _context.Events.FirstOrDefaultAsync(s => s.Id == entity.Id);
 			if (eventEntity != null)
 			{
 				eventEntity.Name = entity.Name;
@@ -58,14 +58,14 @@ namespace Middle0.Persistence.Repositories
 			}
 			return false;
 		}
-		public async Task<EventEntities> GetEventEntitiesByNameAsync(string name)
+		public async Task<Event> GetEventEntitiesByNameAsync(string name)
 		{
-			EventEntities eventEntity = await _context.Events.Where(c => c.Name == name).FirstOrDefaultAsync();
+			Event eventEntity = await _context.Events.Where(c => c.Name == name).FirstOrDefaultAsync();
 			return eventEntity;
 		}
-		public async Task<EventEntities> GetEventById(int id)
+		public async Task<Event> GetEventById(int id)
 		{
-			EventEntities eventEntity = await _context.Events.FirstOrDefaultAsync(s => s.Id == id);
+			Event eventEntity = await _context.Events.FirstOrDefaultAsync(s => s.Id == id);
 			return eventEntity;
 		}
 	}

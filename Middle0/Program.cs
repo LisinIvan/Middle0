@@ -15,7 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEventRepository, EventRepository>();
-builder.Services.AddScoped<IEventEntitiesService, EventEntitiesService>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 builder.Services.AddDbContext<EventDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

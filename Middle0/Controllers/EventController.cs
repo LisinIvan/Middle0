@@ -6,38 +6,46 @@ namespace Middle0.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
-	[ProducesResponseType(typeof(EventEntities), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	public class EventsController : Controller
+	public class EventController : Controller
 	{
 
-		private readonly IEventEntitiesService _eventService;
-		private readonly ILogger<EventsController> _logger;
+		private readonly IEventService _eventService;
+		private readonly ILogger<EventController> _logger;
 
-		public EventsController(IEventEntitiesService eventService, ILogger<EventsController> logger)
+		public EventController(IEventService eventService, ILogger<EventController> logger)
 		{
 			_eventService = eventService;
 			_logger = logger;
 		}
 
-		// GET: api/EventEntities
+		// GET: api/Event
 		[HttpGet]
-		[ProducesResponseType(typeof(List<EventEntities>), StatusCodes.Status200OK)]
-		public async Task<ActionResult<List<EventEntities>>> GetAll()
-		{
-			var result = await _eventService.GetAllEventEntitiesAsync();
-			return Ok(result);
-		}
-
-		//GET: api/EventEntities/{id}}
-		[HttpGet("{id}")]
-		[ProducesResponseType(typeof(EventEntities), StatusCodes.Status200OK)]
-		public async Task<ActionResult<EventEntities>> GetById(int id)
+		[ProducesResponseType(typeof(List<Event>), StatusCodes.Status200OK)]
+		public async Task<IActionResult> GetAll()
 		{
 			try
 			{
-				var result = _eventService.GetEventEntitiesById(id);
+				var result = await _eventService.GetAllEventAsync();
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error with GetAll");
+				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+			}
+		}
+
+		//GET: api/Event/{id}}
+		[HttpGet("{id}")]
+		[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
+		public async Task<ActionResult<Event>> GetById(int id)
+		{
+			try
+			{
+				var result = _eventService.GetEventById(id);
 				if (result == null)
 					return NotFound($"EventEntity with ID {id} not found.");
 				return Ok(result);
@@ -49,28 +57,28 @@ namespace Middle0.Controllers
 			}
 		}
 
-		// GET: api/EventEntities/name/SomeName
+		// GET: api/Event/name/SomeName
 		[HttpGet("name/{name}")]
-		[ProducesResponseType(typeof(EventEntities), StatusCodes.Status200OK)]
-		public async Task<ActionResult<EventEntities>> GetByName(string name)
+		[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
+		public async Task<ActionResult<Event>> GetByName(string name)
 		{
-			var result = await _eventService.GetEventEntitiesByNameAsync(name);
+			var result = await _eventService.GetEventByNameAsync(name);
 			if (result == null)
 				return NotFound();
 			return Ok(result);
 		}
 
-		// POST: api/EventEntities
+		// POST: api/Event
 		[HttpPost]
 		[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-		public async Task<IActionResult> Create([FromBody] EventEntities entity)
+		public async Task<IActionResult> Create([FromBody] Event entity)
 		{
 			try
 			{
 				bool added = await _eventService.AddEventEntity(entity);
 
 				if (added)
-					return Ok(new { message = "Событие успешно создано" });
+					return Ok();
 			}
 			catch (ArgumentException ex)
 			{
@@ -79,10 +87,10 @@ namespace Middle0.Controllers
 			return Conflict(new { message = "Событие с таким именем уже существует" });
 		}
 
-		// PUT: api/EventEntities
+		// PUT: api/Event
 		[HttpPut]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		public async Task<IActionResult> Update([FromBody] EventEntities entity)
+		public async Task<IActionResult> Update([FromBody] Event entity)
 		{
 			//await _eventService.UpdateEventEntity(entity);
 			//return Ok();
@@ -101,7 +109,7 @@ namespace Middle0.Controllers
 			}
 		}
 
-		// DELETE: api/EventEntities/{id}
+		// DELETE: api/Event/{id}
 		[HttpDelete("{id}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async Task<IActionResult> Delete(int id)

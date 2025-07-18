@@ -2,7 +2,7 @@
 
 namespace Middle0.Domain.Entities
 {
-    public class EventEntities
+    public class Event
     {
         [Key]
         public int Id { get; set; }

@@ -7,16 +7,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Middle0.Application.Service
 {
-	public class EventEntitiesService : IEventEntitiesService
+	public class EventService : IEventService
 	{
 		private IEventRepository _eventRepository;
 
-		public EventEntitiesService(IEventRepository eventRepository)
+		public EventService(IEventRepository eventRepository)
 		{
 			_eventRepository = eventRepository;
 		}
 
-		public async Task<bool> AddEventEntity(EventEntities entity)
+		public async Task<bool> AddEventEntity(Event entity)
 		{
 			var context = new ValidationContext(entity);
 			var results = new List<ValidationResult>();
@@ -44,17 +44,17 @@ namespace Middle0.Application.Service
 			return await _eventRepository.DeleteEventEntity(eventId);
 		}
 
-		public async Task<List<EventEntities>> GetAllEventEntitiesAsync()
+		public async Task<List<Event>> GetAllEventAsync()
 		{
 			return await _eventRepository.GetAllEventEntitiesAsync();
 		}
 
-		public async Task<EventEntities> GetEventEntitiesByNameAsync(string name)
+		public async Task<Event> GetEventByNameAsync(string name)
 		{
 			return await _eventRepository.GetEventEntitiesByNameAsync(name);
 		}
 
-		public async Task<bool> UpdateEventEntity(EventEntities entity)
+		public async Task<bool> UpdateEventEntity(Event entity)
 		{
 			if (_eventRepository.GetEventById(entity.Id) != null)
 			{
@@ -63,7 +63,7 @@ namespace Middle0.Application.Service
 			}
 			return false;
 		}
-		public async Task<EventEntities> GetEventEntitiesById(int id)
+		public async Task<Event> GetEventById(int id)
 		{
 			return await _eventRepository.GetEventById(id);
 		}

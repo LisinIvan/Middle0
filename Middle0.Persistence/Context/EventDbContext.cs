@@ -6,7 +6,7 @@ namespace Middle0.Persistence.Context
 {
     public class EventDbContext: DbContext
     {
-		public DbSet<EventEntities> Events { get; set; }
+		public DbSet<Event> Events { get; set; }
 
 		public EventDbContext(DbContextOptions<EventDbContext> options) : base(options) { }
 
