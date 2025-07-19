@@ -53,6 +53,11 @@ namespace Middle0.Persistence.Repositories
 				eventEntity.Name = entity.Name;
 				eventEntity.Description = entity.Description;
 				eventEntity.Category = entity.Category;
+				eventEntity.Images = entity.Images;
+				eventEntity.Place = entity.Place;
+				eventEntity.Date = entity.Date;
+				eventEntity.Time = entity.Time;
+				eventEntity.AdditionalInfo = entity.AdditionalInfo;
 				await _context.SaveChangesAsync();
 				return true;
 			}

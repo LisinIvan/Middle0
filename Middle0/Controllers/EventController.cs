@@ -88,9 +88,9 @@ namespace Middle0.Controllers
 		}
 
 		// PUT: api/Event
-		[HttpPut]
+		[HttpPut("{id}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		public async Task<IActionResult> Update([FromBody] Event entity)
+		public async Task<IActionResult> Update(int id, [FromBody] Event entity)
 		{
 			//await _eventService.UpdateEventEntity(entity);
 			//return Ok();
