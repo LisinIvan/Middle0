@@ -9,13 +9,13 @@ namespace Middle0.Controllers
 	[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	public class EventController : Controller
+	public class EventsController : Controller
 	{
 
 		private readonly IEventService _eventService;
-		private readonly ILogger<EventController> _logger;
+		private readonly ILogger<EventsController> _logger;
 
-		public EventController(IEventService eventService, ILogger<EventController> logger)
+		public EventsController(IEventService eventService, ILogger<EventsController> logger)
 		{
 			_eventService = eventService;
 			_logger = logger;

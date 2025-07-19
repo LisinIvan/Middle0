@@ -12,21 +12,21 @@ namespace Middle0.UI.Services
 		}
 		public async Task<List<Event>> GetAllEventAsync()
 		{
-			return await _httpClient.GetFromJsonAsync<List<Event>>("api/Event");
+			return await _httpClient.GetFromJsonAsync<List<Event>>("api/events");
 		}
 		public async Task<bool> CreateEventAsync(Event ev)
 		{
-			var response = await _httpClient.PostAsJsonAsync("api/Event", ev);
+			var response = await _httpClient.PostAsJsonAsync("api/events", ev);
 			return response.IsSuccessStatusCode;
 		}
 		public async Task<bool> UpdateEventAsync(int id, Event ev)
 		{
-			var response = await _httpClient.PutAsJsonAsync($"api/Event/{id}", ev);
+			var response = await _httpClient.PutAsJsonAsync($"api/events/{id}", ev);
 			return response.IsSuccessStatusCode;
 		}
 		public async Task<bool> DeleteEventAsync(int id)
 		{
-			var response = await _httpClient.DeleteAsync($"api/Event/{id}");
+			var response = await _httpClient.DeleteAsync($"api/events/{id}");
 			return response.IsSuccessStatusCode;
 		}
 	}
