@@ -5,18 +5,18 @@ using Middle0.UI.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Configuration.AddJsonFile("appsettings.json");
+//builder.Configuration.AddJsonFile("appsettings.json");
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+//var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
 
 builder.Services.AddScoped<EventServiceUi>();
 
 builder.Services.AddScoped(sp => new HttpClient 
 { 
-	BaseAddress = new Uri(apiBaseUrl!) /*new Uri(builder.HostEnvironment.BaseAddress)*/
+	BaseAddress = new Uri("https://localhost:7060/") /*new Uri(builder.HostEnvironment.BaseAddress)*/
 });
 
 await builder.Build().RunAsync();

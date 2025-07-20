@@ -1,4 +1,5 @@
-﻿using Middle0.UI.Models;
+﻿//using Middle0.UI.Models;
+using Middle0.Domain.Entities;
 using System.Net.Http.Json;
 namespace Middle0.UI.Services
 {
@@ -12,7 +13,8 @@ namespace Middle0.UI.Services
 		}
 		public async Task<List<Event>> GetAllEventAsync()
 		{
-			return await _httpClient.GetFromJsonAsync<List<Event>>("api/events");
+			var ev = await _httpClient.GetFromJsonAsync<List<Event>>("api/events");
+			return ev;
 		}
 		public async Task<bool> CreateEventAsync(Event ev)
 		{
