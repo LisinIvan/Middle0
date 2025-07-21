@@ -19,7 +19,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-//var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
 
 builder.Services.AddCors(options =>
 {
@@ -27,7 +27,7 @@ builder.Services.AddCors(options =>
 		policy =>
 		{
 			policy.WithOrigins(
-				"https://localhost:7082/"
+				apiBaseUrl!
 				)
 			.AllowAnyHeader()
 			.AllowAnyMethod();
