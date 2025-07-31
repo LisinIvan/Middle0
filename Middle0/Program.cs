@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Middle0.Application.Service;
 using Middle0.Application.Service.Interfaces;
+using Middle0.Middlewares;
 using Middle0.Persistence.Context;
 using Middle0.Persistence.Repositories;
 using Middle0.Persistence.Repositories.Interfaces;
@@ -38,10 +39,6 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<EventDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionDocker")));
 
-var app = builder.Build();
-
-app.UseCors(MyAllowSpecificOrigins);
-
 //---------------------------------------------------------------------------------
 
 Log.Logger = new LoggerConfiguration()
@@ -55,19 +52,39 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+
+
+//--------------------------------------------------------------------------------
+
+var app = builder.Build();
+
+//----------------------------------------------------------
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
+// Тестовый маршрут
 app.MapGet("/", () =>
+{
+	// Искусственная ошибка
+	throw new Exception("Тестовая ошибка");
+});
+
+/*app.MapGet("/", () =>
 {
 	Log.Information("Это информационное сообщение");      // пример лога
 	return "Hello World!";
-});
+});*/
+//----------------------------------------------------------
 
-//--------------------------------------------------------------------------------
+app.UseCors(MyAllowSpecificOrigins);
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

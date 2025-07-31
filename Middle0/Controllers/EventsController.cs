@@ -26,16 +26,16 @@ namespace Middle0.Controllers
 		[ProducesResponseType(typeof(List<Event>), StatusCodes.Status200OK)]
 		public async Task<IActionResult> GetAll()
 		{
-			try
-			{
+			/*try
+			{*/
 				var result = await _eventService.GetAllEventAsync();
 				return Ok(result);
-			}
+			/*}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error with GetAll");
 				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
-			}
+			}*/
 		}
 
 		//GET: api/Event/{id}}
@@ -43,18 +43,19 @@ namespace Middle0.Controllers
 		[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
 		public async Task<ActionResult<Event>> GetById(int id)
 		{
-			try
-			{
+			/*try
+			{*/
 				var result = _eventService.GetEventById(id);
 				if (result == null)
 					return NotFound($"EventEntity with ID {id} not found.");
 				return Ok(result);
-			}
+			/*}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error with GetById, where id = {id}", id);
 				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
-			}
+			}*/
+			
 		}
 
 		// GET: api/Event/name/SomeName
@@ -73,17 +74,17 @@ namespace Middle0.Controllers
 		[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
 		public async Task<IActionResult> Create([FromBody] Event entity)
 		{
-			try
-			{
+			/*try
+			{*/
 				bool added = await _eventService.AddEventEntity(entity);
 
-				if (added)
-					return Ok();
-			}
+			if (added)
+				return Ok();
+			/*}
 			catch (ArgumentException ex)
 			{
 				return BadRequest(new { message = ex.Message });
-			}
+			}*/
 			return Conflict(new { message = "Событие с таким именем уже существует" });
 		}
 
@@ -94,19 +95,19 @@ namespace Middle0.Controllers
 		{
 			//await _eventService.UpdateEventEntity(entity);
 			//return Ok();
-			try
-			{
+			/*try
+			{*/
 				var success = await _eventService.UpdateEventEntity(entity);
 
 				if (!success)
 					return NotFound($"Событие с ID {entity.Id} не найдено или не удалось обновить.");
 
 				return NoContent();
-			}
+			/*}
 			catch (Exception ex)
 			{
 				return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
-			}
+			}*/
 		}
 
 		// DELETE: api/Event/{id}
