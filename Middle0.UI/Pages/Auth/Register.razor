@@ -1,0 +1,74 @@
+﻿@page "/auth/register"
+
+<h3>Регистрация</h3>
+
+@if (!string.IsNullOrEmpty(SuccessMessage))
+{
+    <div style="color:green">@SuccessMessage</div>
+}
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div style="color:red">@ErrorMessage</div>
+}
+
+<EditForm Model="@Input" OnValidSubmit="HandleRegister">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Имя пользователя:</label><br />
+        <InputText @bind-Value="Input.Username" />
+    </div>
+
+    <div>
+        <label>Email:</label><br />
+        <InputText @bind-Value="Input.Email" />
+    </div>
+
+    <div>
+        <label>Пароль:</label><br />
+        <InputText @bind-Value="Input.Password" type="password" />
+    </div>
+
+    <button type="submit">Зарегистрироваться</button>
+</EditForm>
+
+@code {
+    [Inject] private HttpClient Http { get; set; }
+
+    private RegisterDto Input = new();
+    private string ErrorMessage;
+    private string SuccessMessage;
+
+    private async Task HandleRegister()
+    {
+        ErrorMessage = "";
+        SuccessMessage = "";
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/Auth/register", Input);
+
+            if (response.IsSuccessStatusCode)
+            {
+                SuccessMessage = "Пользователь успешно зарегистрирован!";
+                Input = new RegisterDto();
+            }
+            else
+            {
+                var errors = await response.Content.ReadAsStringAsync();
+                ErrorMessage = $"Ошибка регистрации: {errors}";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Ошибка соединения: {ex.Message}";
+        }
+    }
+
+    public class RegisterDto
+    {
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+}

@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Middle0.Application.Service;
 using Middle0.Application.Service.Interfaces;
+using Middle0.Configuration;
 using Middle0.Middlewares;
 using Middle0.Persistence.Context;
 using Middle0.Persistence.Repositories;
@@ -38,6 +40,21 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<EventDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionDocker")));
+
+//---------------------------------------------------------------------------------
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+	.AddEntityFrameworkStores<EventDbContext>()
+	.AddDefaultTokenProviders();
+
+builder.Services.AddIdentityServer()
+	.AddAspNetIdentity<IdentityUser>()
+	.AddInMemoryClients(Config.Clients)
+	.AddInMemoryIdentityResources(Config.IdentityResources)
+	.AddInMemoryApiScopes(Config.ApiScopes)
+	.AddDeveloperSigningCredential();
+
+builder.Services.AddControllers();
 
 //---------------------------------------------------------------------------------
 
@@ -99,5 +116,14 @@ using (var scope = app.Services.CreateScope())
 	db.Database.Migrate();
 	DbInitializer.Seed(db);
 }
+
+//---------------------------------------
+app.UseRouting();
+
+app.UseIdentityServer(); // важно
+app.UseAuthorization();
+
+app.MapControllers();
+//---------------------------------------
 
 app.Run();
