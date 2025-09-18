@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Middle0.Configuration;
+using Middle0.Domain.Common.DTO;
 
 namespace Middle0.Controllers
 {
@@ -26,7 +26,7 @@ namespace Middle0.Controllers
 			if (!result.Succeeded)
 				return BadRequest(result.Errors);
 
-			return Ok("User created");
+			return Ok();
 		}
 
 		[HttpPost("login")]
@@ -36,20 +36,8 @@ namespace Middle0.Controllers
 			if (!result.Succeeded)
 				return Unauthorized();
 
-			return Ok("Login successful");
+			return Ok();
 		}
 	}
 
-	public class RegisterDto
-	{
-		public string Username { get; set; }
-		public string Email { get; set; }
-		public string Password { get; set; }
-	}
-
-	public class LoginDto
-	{
-		public string Username { get; set; }
-		public string Password { get; set; }
-	}
 }
