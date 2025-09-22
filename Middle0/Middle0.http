@@ -1,6 +1,0 @@
-@Middle0_HostAddress = http://localhost:5178
-
-GET {{Middle0_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
