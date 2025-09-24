@@ -1,5 +1,6 @@
 ﻿@page "/auth/register"
 @using Middle0.Domain.Common.DTO;
+@using System.Text.RegularExpressions
 
 <h3>Регистрация</h3>
 
@@ -55,27 +56,42 @@
 
             if (response.IsSuccessStatusCode)
             {
-                SuccessMessage = "Пользователь успешно зарегистрирован!";
+                SuccessMessage = "User successfully registered!";
                 Input = new RegisterDto();
             }
             else
             {
-                var errors = await response.Content.ReadAsStringAsync();
-                Logger.LogWarning("Ошибка регистрации: {Errors}", errors);
-                ErrorMessage = $"Ошибка регистрации: {errors}";
+                var json = await response.Content.ReadAsStringAsync();
+                Logger.LogWarning("Error registration: {Errors}", json);
+                //ErrorMessage = $"Ошибка регистрации: {errors}";
+
+                try
+                {
+                    // Парсим список ошибок от сервера
+                    var errors = System.Text.Json.JsonSerializer.Deserialize<List<IdentityErrorDto>>(json);
+
+                    if (errors != null && errors.Count > 0)
+                    {
+                        // Формируем красивый список ошибок
+                        //ErrorMessage = string.Join("<br/>", errors.Select(e => e.Description));
+                        ErrorMessage = "Password is incorrect";
+                    }
+                    else
+                    {
+                        ErrorMessage = "Registration failed. Please check your details and try again.";
+                    }
+                }
+                catch
+                {
+                    ErrorMessage = "Registration failed. Please try again.";
+                }
             }
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Ошибка при попытке регистрации пользователя");
-            ErrorMessage = $"Ошибка соединения: {ex.Message}";
+            Logger.LogError(ex, "Error while trying to register user");
+            ErrorMessage = $"Error connection: {ex.Message}";
         }
     }
 
-    // public class RegisterDto
-    // {
-    //     public string Username { get; set; }
-    //     public string Email { get; set; }
-    //     public string Password { get; set; }
-    // }
 }

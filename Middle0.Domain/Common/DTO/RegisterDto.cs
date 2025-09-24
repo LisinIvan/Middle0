@@ -11,7 +11,7 @@ namespace Middle0.Domain.Common.DTO
 		public string Username { get; set; }
 
 		[Required(ErrorMessage = "Email обязателен")]
-		[EmailAddress(ErrorMessage = "Введите корректный email")]
+		[RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Введите корректный email")]
 		public string Email { get; set; }
 
 		[Required(ErrorMessage = "Пароль обязателен")]

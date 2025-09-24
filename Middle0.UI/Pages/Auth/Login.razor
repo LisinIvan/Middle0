@@ -48,20 +48,20 @@
 
             if (response.IsSuccessStatusCode)
             {
-                SuccessMessage = "✅ Успешный вход!";
+                SuccessMessage = "✅ Successful login!";
                 Input = new LoginDto(); // очистка формы
                 //await Task.Delay(1500); // дать время увидеть сообщение
                 //Nav.NavigateTo("/"); // перенаправляем на главную или другую страницу
             }
             else
             {
-                var errors = await response.Content.ReadAsStringAsync();
-                ErrorMessage = $"❌ Ошибка входа: {errors}";
+                //var errors = await response.Content.ReadAsStringAsync();
+                ErrorMessage = $"❌ Login error: {response.ReasonPhrase}";
             }
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"⚠️ Ошибка соединения: {ex.Message}";
+            ErrorMessage = $"⚠️ Connection error: {ex.Message}";
         }
     }
 
