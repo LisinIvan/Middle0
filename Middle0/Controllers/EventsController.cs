@@ -26,16 +26,9 @@ namespace Middle0.Controllers
 		[ProducesResponseType(typeof(List<Event>), StatusCodes.Status200OK)]
 		public async Task<IActionResult> GetAll()
 		{
-			/*try
-			{*/
-				var result = await _eventService.GetAllEventAsync();
-				return Ok(result);
-			/*}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error with GetAll");
-				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
-			}*/
+
+			var result = await _eventService.GetAllEventAsync();
+			return Ok(result);
 		}
 
 		//GET: api/Event/{id}}
@@ -43,19 +36,12 @@ namespace Middle0.Controllers
 		[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
 		public async Task<ActionResult<Event>> GetById(int id)
 		{
-			/*try
-			{*/
-				var result = _eventService.GetEventById(id);
-				if (result == null)
-					return NotFound($"EventEntity with ID {id} not found.");
-				return Ok(result);
-			/*}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error with GetById, where id = {id}", id);
-				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
-			}*/
-			
+			var result = _eventService.GetEventById(id);
+			if (result == null)
+				return NotFound($"EventEntity with ID {id} not found.");
+			return Ok(result);
+
+
 		}
 
 		// GET: api/Event/name/SomeName
@@ -74,17 +60,12 @@ namespace Middle0.Controllers
 		[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
 		public async Task<IActionResult> Create([FromBody] Event entity)
 		{
-			/*try
-			{*/
-				bool added = await _eventService.AddEventEntity(entity);
+
+			bool added = await _eventService.AddEventEntity(entity);
 
 			if (added)
 				return Ok();
-			/*}
-			catch (ArgumentException ex)
-			{
-				return BadRequest(new { message = ex.Message });
-			}*/
+
 			return Conflict(new { message = "Событие с таким именем уже существует" });
 		}
 
@@ -93,21 +74,14 @@ namespace Middle0.Controllers
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async Task<IActionResult> Update(int id, [FromBody] Event entity)
 		{
-			//await _eventService.UpdateEventEntity(entity);
-			//return Ok();
-			/*try
-			{*/
-				var success = await _eventService.UpdateEventEntity(entity);
 
-				if (!success)
-					return NotFound($"Событие с ID {entity.Id} не найдено или не удалось обновить.");
+			var success = await _eventService.UpdateEventEntity(entity);
 
-				return NoContent();
-			/*}
-			catch (Exception ex)
-			{
-				return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
-			}*/
+			if (!success)
+				return NotFound($"Событие с ID {entity.Id} не найдено или не удалось обновить.");
+
+			return NoContent();
+
 		}
 
 		// DELETE: api/Event/{id}

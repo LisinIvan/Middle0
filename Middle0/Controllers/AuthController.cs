@@ -20,7 +20,11 @@ namespace Middle0.Controllers
 		[HttpPost("register")]
 		public async Task<IActionResult> Register([FromBody] RegisterDto dto)
 		{
-			var user = new IdentityUser { UserName = dto.Username, Email = dto.Email };
+			var existingUser = await _userManager.FindByEmailAsync(dto.Email);
+			if (existingUser != null)
+				return BadRequest(new { message = "A user with this email is already registered." });
+
+			var user = new IdentityUser { UserName = dto.Email, Email = dto.Email };
 			var result = await _userManager.CreateAsync(user, dto.Password);
 
 			if (!result.Succeeded)
@@ -32,7 +36,11 @@ namespace Middle0.Controllers
 		[HttpPost("login")]
 		public async Task<IActionResult> Login([FromBody] LoginDto dto)
 		{
-			var result = await _signInManager.PasswordSignInAsync(dto.Username, dto.Password, false, false);
+			var user = await _userManager.FindByEmailAsync(dto.Email);
+			if (user == null)
+				return Unauthorized("User not found");
+
+			var result = await _signInManager.PasswordSignInAsync(user.UserName, dto.Password, false, false);
 			if (!result.Succeeded)
 				return Unauthorized();
 

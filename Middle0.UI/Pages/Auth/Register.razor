@@ -10,7 +10,7 @@
 }
 @if (!string.IsNullOrEmpty(ErrorMessage))
 {
-    <div style="color:red">@ErrorMessage</div>
+    <div style="color:red">@((MarkupString)ErrorMessage)</div>
 }
 
 <EditForm Model="@Input" OnValidSubmit="HandleRegister">
@@ -63,18 +63,14 @@
             {
                 var json = await response.Content.ReadAsStringAsync();
                 Logger.LogWarning("Error registration: {Errors}", json);
-                //ErrorMessage = $"Ошибка регистрации: {errors}";
 
                 try
                 {
-                    // Парсим список ошибок от сервера
                     var errors = System.Text.Json.JsonSerializer.Deserialize<List<IdentityErrorDto>>(json);
 
                     if (errors != null && errors.Count > 0)
                     {
-                        // Формируем красивый список ошибок
-                        //ErrorMessage = string.Join("<br/>", errors.Select(e => e.Description));
-                        ErrorMessage = "Password is incorrect";
+                        ErrorMessage = string.Join("<br/>", errors.Select(e => e.description));
                     }
                     else
                     {
@@ -83,7 +79,8 @@
                 }
                 catch
                 {
-                    ErrorMessage = "Registration failed. Please try again.";
+                    
+                    ErrorMessage = "A user with this email is already registered.";
                 }
             }
         }
@@ -92,6 +89,10 @@
             Logger.LogError(ex, "Error while trying to register user");
             ErrorMessage = $"Error connection: {ex.Message}";
         }
+    }
+    public class ErrorResponse
+    {
+        public string Message { get; set; }
     }
 
 }

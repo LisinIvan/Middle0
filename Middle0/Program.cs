@@ -60,11 +60,11 @@ builder.Services.AddControllers();
 
 Log.Logger = new LoggerConfiguration()
 	.WriteTo.MongoDB(
-		databaseUrl: "mongodb://localhost:8080/logs",   // строка подключения и БД
-		collectionName: "logevents"                      // имя коллекции
+		databaseUrl: "mongodb://localhost:8080/logs",  
+		collectionName: "logevents"                     
 	)
 	.Enrich.FromLogContext()
-	.Enrich.WithProperty("Application", "MyApp")          // необязательное добавление контекста
+	.Enrich.WithProperty("Application", "MyApp")          
 	.CreateLogger();
 
 builder.Host.UseSerilog();
@@ -79,19 +79,10 @@ var app = builder.Build();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-// Тестовый маршрут
 app.MapGet("/", () =>
 {
-	// Искусственная ошибка
 	throw new Exception("Тестовая ошибка");
 });
-
-/*app.MapGet("/", () =>
-{
-	Log.Information("Это информационное сообщение");      // пример лога
-	return "Hello World!";
-});*/
-//----------------------------------------------------------
 
 app.UseCors(MyAllowSpecificOrigins);
 

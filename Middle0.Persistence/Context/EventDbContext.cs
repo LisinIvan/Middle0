@@ -18,7 +18,6 @@ namespace Middle0.Persistence.Context
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
-			// Можно задать Fluent API настройки тут
 		}
 
 	}
@@ -26,7 +25,6 @@ namespace Middle0.Persistence.Context
 	{
 		public EventDbContext CreateDbContext(string[] args)
 		{
-			// Загружаем конфигурацию из appsettings.json
 			IConfigurationRoot configuration = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
 				.AddJsonFile("appsettings.json")
@@ -34,7 +32,6 @@ namespace Middle0.Persistence.Context
 
 			var optionsBuilder = new DbContextOptionsBuilder<EventDbContext>();
 
-			// Берём строку подключения
 			var connectionString = configuration.GetConnectionString("DefaultConnectionDocker");
 
 			optionsBuilder.UseSqlServer(connectionString);

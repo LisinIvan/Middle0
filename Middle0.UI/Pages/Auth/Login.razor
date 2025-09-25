@@ -1,4 +1,5 @@
 ﻿@page "/auth/login"
+@using Middle0.Domain.Common.DTO;
 
 <h3>Вход</h3>
 
@@ -17,12 +18,12 @@
     <ValidationSummary />
 
     <div>
-        <label>Имя пользователя:</label><br />
-        <InputText @bind-Value="Input.Username" />
+        <label>Email:</label><br />
+        <InputText @bind-Value="Input.Email" />
     </div>
 
     <div>
-        <label>Пароль:</label><br />
+        <label>Password:</label><br />
         <InputText @bind-Value="Input.Password" type="password" />
     </div>
 
@@ -49,13 +50,10 @@
             if (response.IsSuccessStatusCode)
             {
                 SuccessMessage = "✅ Successful login!";
-                Input = new LoginDto(); // очистка формы
-                //await Task.Delay(1500); // дать время увидеть сообщение
-                //Nav.NavigateTo("/"); // перенаправляем на главную или другую страницу
+                Input = new LoginDto();
             }
             else
             {
-                //var errors = await response.Content.ReadAsStringAsync();
                 ErrorMessage = $"❌ Login error: {response.ReasonPhrase}";
             }
         }
@@ -63,11 +61,5 @@
         {
             ErrorMessage = $"⚠️ Connection error: {ex.Message}";
         }
-    }
-
-    public class LoginDto
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
     }
 }
