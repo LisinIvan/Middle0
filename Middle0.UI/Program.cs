@@ -5,6 +5,7 @@ using Middle0.UI.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
+builder.Services.AddAuthorizationCore();
 builder.Configuration.AddJsonFile("appsettings.json");
 
 builder.RootComponents.Add<App>("#app");
