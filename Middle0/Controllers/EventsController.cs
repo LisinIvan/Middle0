@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Middle0.Application.Service.Interfaces;
 using Middle0.Domain.Entities;
 
 namespace Middle0.Controllers
 {
+
 	[ApiController]
 	[Route("api/[controller]")]
 	[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+	[Authorize]
 	public class EventsController : Controller
 	{
 

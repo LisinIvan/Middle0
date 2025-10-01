@@ -5,7 +5,7 @@ using Middle0.UI.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Services.AddAuthorizationCore();
+
 builder.Configuration.AddJsonFile("appsettings.json");
 
 builder.RootComponents.Add<App>("#app");
@@ -14,6 +14,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
 
 builder.Services.AddScoped<EventServiceUi>();
+
+builder.Services.AddAuthorizationCore();
 
 builder.Services.AddScoped(sp => new HttpClient 
 { 
