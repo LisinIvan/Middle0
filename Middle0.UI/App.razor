@@ -1,4 +1,22 @@
-﻿@* <Router AppAssembly="@typeof(App).Assembly">
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Program).Assembly">
+        <Found Context="routeData">
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Page not found</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+
+
+
+@* <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
 
@@ -18,10 +36,24 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <RedirectToLogin />
+                    @if (routeData.PageType.CustomAttributes.Any(attr => attr.AttributeType == typeof(Microsoft.AspNetCore.Authorization.AuthorizeAttribute)))
+                    {
+                        <LayoutView Layout="@typeof(MainLayout)">
+                            <p role="alert">У вас нет доступа. Пожалуйста, войдите в систему.</p>
+                            <a href="auth/login">Войти</a>
+                            <RedirectToLogin />
+                        </LayoutView>
+                    }
+                    else
+                    {
+                        <!-- Если у страницы нет [Authorize], то показываем её контент -->
+                        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                    }
                 </NotAuthorized>
                 <Authorizing>
-                    <p>Авторизация...</p>
+                    <LayoutView Layout="@typeof(MainLayout)">
+                        <p>Авторизация...</p>
+                    </LayoutView>
                 </Authorizing>
             </AuthorizeRouteView>
 
@@ -36,25 +68,5 @@
     </Router>
 </CascadingAuthenticationState> *@
 
-<CascadingAuthenticationState>
-	<Router AppAssembly="@typeof(App).Assembly">
-		<Found Context="routeData">
-			<AuthorizeView>
-				<Authorized>
-					<p>Welcome, authenticated user!</p>
-				</Authorized>
-				<NotAuthorized>
-					<p>You are not authorized to view this content</p>
-				</NotAuthorized>
-			</AuthorizeView>
 
-			<FocusOnNavigate RouteData="@routeData" Selector="h1" />
-		</Found>
-		<NotFound>
-			<PageTitle>Not found</PageTitle>
-			<LayoutView Layout="@typeof(MainLayout)">
-				<p role="alert">Sorry, there's nothing at this address.</p>
-			</LayoutView>
-		</NotFound>
-	</Router>
-</CascadingAuthenticationState>
+

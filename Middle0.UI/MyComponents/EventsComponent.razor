@@ -1,0 +1,186 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Middle0.UI.Models
+@using Middle0.UI.Services
+@inject EventServiceUi ESUI
+
+<h3>AllEvent</h3>
+
+
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Category</th>
+			<th>Name</th>
+			<th>Images</th>
+			<th>Description</th>
+			<th>Place</th>
+			<th>Date</th>
+			<th>Time</th>
+			<th>Additional Info</th>
+			<th>Add</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><input type="text" @bind="newEvent.Category" class="form-control" /></td>
+			<td><input type="text" @bind="newEvent.Name" class="form-control" /></td>
+			<td><input type="text" @bind="newEvent.Images" class="form-control" /></td>
+			<td><input type="text" @bind="newEvent.Description" class="form-control" /></td>
+			<td><input type="text" @bind="newEvent.Place" class="form-control" /></td>
+			<td><input type="text" @bind="newEvent.Date" class="form-control" /></td>
+			<td><input type="text" @bind="newEvent.Time" class="form-control" /></td>
+			<td><input type="text" @bind="newEvent.AdditionalInfo" class="form-control" /></td>
+			<td>
+				<button class="btn btn-success" @onclick="AddNewEvent">Добавить</button>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<table>
+	<thead>
+		<tr>
+			<th>Category</th>
+			<th>Name</th>
+			<th>Images</th>
+			<th>Description</th>
+			<th>Place</th>
+			<th>Date</th>
+			<th>Time</th>
+			<th>AditioinalInfo</th>
+			<th>Delete</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (_event != null)
+		{
+			@foreach (var itemEvent in _event)
+			{
+				<tr>
+					<td>
+						<input type="text" @bind="itemEvent.Category" class="form-control" />
+					</td>
+					<td>
+						<input type="text" @bind="itemEvent.Name" class="form-control" />
+					</td>
+					<td>
+						<input type="text" @bind="itemEvent.Images" class="form-control" />
+					</td>
+					<td>
+						<input type="text" @bind="itemEvent.Description" class="form-control" />
+					</td>
+					<td>
+						<input type="text" @bind="itemEvent.Place" class="form-control" />
+					</td>
+					<td>
+						<input type="text" @bind="itemEvent.Date" class="form-control" />
+					</td>
+					<td>
+						<input type="text" @bind="itemEvent.Time" class="form-control" />
+					</td>
+					<td>
+						<input type="text" @bind="itemEvent.AdditionalInfo" class="form-control" />
+					</td>
+					<td>
+						<button class="btn btn-success me-2" @onclick="() => UpdateEvent(itemEvent)">Изменить</button>
+						<button class="btn btn-danger" @onclick="() => DeleteItem(itemEvent)">Удалить</button>
+					</td>
+				</tr>
+			}
+		}
+	</tbody>
+</table>
+
+@code {
+	private List<Event> _event;
+	private string errorMessage;
+	private Event newEvent = new();
+
+	
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadEventAll();
+	}
+	private async Task LoadEventAll()
+	{
+		try
+		{
+			_event = await ESUI.GetAllEventAsync();
+			StateHasChanged();
+		}
+		catch (Exception ex)
+		{
+			errorMessage = $"Ошибка загрузки данных: {ex.Message}";
+			StateHasChanged();
+		}
+	}
+
+	private async Task UpdateEvent(Event ev)
+	{
+		if (!string.IsNullOrEmpty(ev.Name))
+		{
+			try
+			{
+				await ESUI.UpdateEventAsync(ev.Id, ev);
+				await LoadEventAll();
+			}
+			catch (Exception ex)
+			{
+				errorMessage = $"Ошибка загрузки данных: {ex.Message}";
+				StateHasChanged();
+			}
+		}
+		else
+		{
+			errorMessage = "Название не может быть пустым.";
+			StateHasChanged();
+		}
+	}
+
+	private async Task DeleteItem(Event ev)
+	{
+		errorMessage = string.Empty;
+		try
+		{
+			bool canDelete = await ESUI.DeleteEventAsync(ev.Id);
+			await LoadEventAll();
+
+			if (canDelete)
+			{
+				_event.Remove(ev);
+			}
+			else
+			{
+				errorMessage = $"Невозможно удалить {ev.Name}: элемент используется.";
+				StateHasChanged();
+			}
+		}
+		catch (Exception ex)
+		{
+			errorMessage = $"Ошибка при удалении: {ex.Message}";
+			StateHasChanged();
+		}
+	}
+	private async Task AddNewEvent()
+	{
+		if (!string.IsNullOrEmpty(newEvent.Name))
+		{
+			bool success = await ESUI.CreateEventAsync(newEvent);
+
+			if (success)
+			{
+				// Очистить форму после добавления
+				newEvent = new();
+				await LoadEventAll();
+				StateHasChanged(); // Обновить UI
+			}
+			else
+			{
+				// Обработка ошибки, если нужно
+				Console.WriteLine("Ошибка при добавлении события.");
+			}
+		}
+	}
+}

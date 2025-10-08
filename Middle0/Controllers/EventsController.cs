@@ -11,7 +11,6 @@ namespace Middle0.Controllers
 	[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	[Authorize]
 	public class EventsController : Controller
 	{
 

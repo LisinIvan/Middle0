@@ -1,4 +1,8 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthProvider
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -6,7 +10,18 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <AuthorizeView>
+                <Authorized Context="context">
+                    <div>
+                        <span>@context.User.Identity?.Name</span>
+                        
+                        <a href="#" @onclick="Logout">Logout</a>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    You are not authorize !
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">
@@ -14,3 +29,16 @@
         </article>
     </main>
 </div>
+
+@code{
+
+    private async Task Logout()
+    {
+        await JS.InvokeVoidAsync("localStorage.removeItem", "authToken");
+
+        if (AuthProvider is MinimalAuthProvider provider)
+            provider.Notify();
+
+        Navigation.NavigateTo("/auth/login", true);
+    }
+}

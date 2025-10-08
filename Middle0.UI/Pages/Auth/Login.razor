@@ -1,5 +1,6 @@
 ﻿@page "/auth/login"
 @using Middle0.Domain.Common.DTO;
+@using Microsoft.AspNetCore.WebUtilities;
 
 <h3>Вход</h3>
 
@@ -33,10 +34,22 @@
 @code {
     [Inject] private HttpClient Http { get; set; }
     [Inject] private NavigationManager Nav { get; set; }
+    [Inject] private IJSRuntime JS { get; set; }
 
     private LoginDto Input = new();
     private string ErrorMessage;
     private string SuccessMessage;
+    private string ReturnUrl;
+
+    protected override void OnInitialized()
+    {
+        var uri = Nav.ToAbsoluteUri(Nav.Uri);
+
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("returnUrl", out var url))
+        {
+            ReturnUrl = url;
+        }
+    }
 
     private async Task HandleLogin()
     {
@@ -49,8 +62,38 @@
 
             if (response.IsSuccessStatusCode)
             {
-                SuccessMessage = "✅ Successful login!";
-                Input = new LoginDto();
+                //SuccessMessage = "✅ Successful login!";
+                //Input = new LoginDto();
+
+                // SuccessMessage = "✅ Successful login!";
+                // Input = new LoginDto();
+                // // редирект
+                // if (!string.IsNullOrEmpty(ReturnUrl))
+                //     Nav.NavigateTo(ReturnUrl, forceLoad: true);
+                // else
+                //     Nav.NavigateTo("/", forceLoad: true);
+
+                // читаем JSON с токеном
+                var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
+
+                if (result != null && !string.IsNullOrEmpty(result.Token))
+                {
+                    // сохраняем токен в localStorage
+                    await JS.InvokeVoidAsync("localStorage.setItem", "authToken", result.Token);
+
+                    SuccessMessage = "✅ Successful login!";
+                    Input = new LoginDto();
+
+                    // редирект
+                    if (!string.IsNullOrEmpty(ReturnUrl))
+                        Nav.NavigateTo(ReturnUrl, forceLoad: true);
+                    else
+                        Nav.NavigateTo("/", forceLoad: true);
+                }
+                else
+                {
+                    ErrorMessage = "⚠️ Сервер не вернул токен";
+                }
             }
             else
             {
