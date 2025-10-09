@@ -16,14 +16,6 @@ var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
 
 builder.Services.AddScoped<EventServiceUi>();
 
-//builder.Services.AddScoped<AuthMessageHandler>();
-
-//builder.Services.AddHttpClient("API", client =>
-//{
-//	client.BaseAddress = new Uri("https://localhost:5001/api/");
-//})
-//.AddHttpMessageHandler<AuthMessageHandler>();
-
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, MinimalAuthProvider>();
 

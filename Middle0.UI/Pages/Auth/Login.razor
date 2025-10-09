@@ -62,29 +62,15 @@
 
             if (response.IsSuccessStatusCode)
             {
-                //SuccessMessage = "✅ Successful login!";
-                //Input = new LoginDto();
-
-                // SuccessMessage = "✅ Successful login!";
-                // Input = new LoginDto();
-                // // редирект
-                // if (!string.IsNullOrEmpty(ReturnUrl))
-                //     Nav.NavigateTo(ReturnUrl, forceLoad: true);
-                // else
-                //     Nav.NavigateTo("/", forceLoad: true);
-
-                // читаем JSON с токеном
                 var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
 
                 if (result != null && !string.IsNullOrEmpty(result.Token))
                 {
-                    // сохраняем токен в localStorage
                     await JS.InvokeVoidAsync("localStorage.setItem", "authToken", result.Token);
 
                     SuccessMessage = "✅ Successful login!";
                     Input = new LoginDto();
 
-                    // редирект
                     if (!string.IsNullOrEmpty(ReturnUrl))
                         Nav.NavigateTo(ReturnUrl, forceLoad: true);
                     else
