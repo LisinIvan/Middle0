@@ -56,7 +56,7 @@ namespace Middle0.Application.Service
 
 		public async Task<bool> UpdateEventEntity(Event entity)
 		{
-			if (_eventRepository.GetEventById(entity.Id) != null)
+			if (await _eventRepository.GetEventById(entity.Id) != null)
 			{
 				await _eventRepository.UpdateEventEntity(entity);
 				return true;
