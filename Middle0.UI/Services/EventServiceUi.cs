@@ -1,6 +1,7 @@
 ﻿using Middle0.UI.Models;
-//using Middle0.Domain.Entities;
+using Middle0.Domain.Common.DTO;
 using System.Net.Http.Json;
+
 namespace Middle0.UI.Services
 {
 	public class EventServiceUi
@@ -16,7 +17,7 @@ namespace Middle0.UI.Services
 			var ev = await _httpClient.GetFromJsonAsync<List<Event>>("api/events");
 			return ev;
 		}
-		public async Task<bool> CreateEventAsync(Event ev)
+		public async Task<bool> CreateEventAsync(EventEmailDTO ev)
 		{
 			var response = await _httpClient.PostAsJsonAsync("api/events", ev);
 			return response.IsSuccessStatusCode;

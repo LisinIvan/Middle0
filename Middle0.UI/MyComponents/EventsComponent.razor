@@ -1,7 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using Middle0.UI.Models
 @using Middle0.UI.Services
+@using Middle0.Domain.Common.DTO
 @inject EventServiceUi ESUI
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h3>AllEvent</h3>
 
@@ -23,13 +26,13 @@
 	</thead>
 	<tbody>
 		<tr>
-			<td><input type="text" @bind="newEvent.Category" class="form-control" /></td>
-			<td><input type="text" @bind="newEvent.Name" class="form-control" /></td>
+			<td><input type="text" @bind="newEvent.Category" class="form-control" maxlength="30" /></td>
+			<td><input type="text" @bind="newEvent.Name" class="form-control" maxlength="30" /></td>
 			<td><input type="text" @bind="newEvent.Images" class="form-control" /></td>
-			<td><input type="text" @bind="newEvent.Description" class="form-control" /></td>
-			<td><input type="text" @bind="newEvent.Place" class="form-control" /></td>
-			<td><input type="text" @bind="newEvent.Date" class="form-control" /></td>
-			<td><input type="text" @bind="newEvent.Time" class="form-control" /></td>
+			<td><input type="text" @bind="newEvent.Description" class="form-control" maxlength="200" /></td>
+			<td><input type="text" @bind="newEvent.Place" class="form-control" maxlength="30" /></td>
+			<td><input type="text" value="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" readonly /></td>
+			<td><input type="text" value="@DateTime.Now.ToString("HH:mm")" readonly class="form-control" /></td>
 			<td><input type="text" @bind="newEvent.AdditionalInfo" class="form-control" /></td>
 			<td>
 				<button class="btn btn-success" @onclick="AddNewEvent">Добавить</button>
@@ -37,6 +40,10 @@
 		</tr>
 	</tbody>
 </table>
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+	<div class="alert alert-danger mt-3">@errorMessage</div>
+}
 
 <table>
 	<thead>
@@ -96,11 +103,21 @@
 	private List<Event> _event;
 	private string errorMessage;
 	private Event newEvent = new();
+	private string userName;
+	private string userEmail;
 
-	
 
 	protected override async Task OnInitializedAsync()
 	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (user.Identity?.IsAuthenticated == true)
+		{
+			userName = user.Identity.Name;
+			userEmail = user.FindFirst(c => c.Type == "email")?.Value;
+		}
+
 		await LoadEventAll();
 	}
 	private async Task LoadEventAll()
@@ -165,22 +182,79 @@
 	}
 	private async Task AddNewEvent()
 	{
-		if (!string.IsNullOrEmpty(newEvent.Name))
-		{
-			bool success = await ESUI.CreateEventAsync(newEvent);
+		errorMessage = string.Empty;   
 
-			if (success)
-			{
-				// Очистить форму после добавления
-				newEvent = new();
-				await LoadEventAll();
-				StateHasChanged(); // Обновить UI
-			}
-			else
-			{
-				// Обработка ошибки, если нужно
-				Console.WriteLine("Ошибка при добавлении события.");
-			}
+		if (string.IsNullOrWhiteSpace(newEvent.Name))
+		{
+			errorMessage = "Название не может быть пустым.";
+			return;
 		}
+
+		// Проверки длины
+		if (newEvent.Name?.Length > 30)
+		{
+			errorMessage = "Название не может превышать 30 символов.";
+			return;
+		}
+		if (newEvent.Category?.Length > 30)
+		{
+			errorMessage = "Категория не может превышать 30 символов.";
+			return;
+		}
+		if (newEvent.Place?.Length > 50)
+		{
+			errorMessage = "Название места не может превышать 50 символов.";
+			return;
+		}
+		if (newEvent.Description?.Length > 200)
+		{
+			errorMessage = "Описание не может превышать 200 символов.";
+			return;
+		}
+
+		EventEmailDTO EEdto = new EventEmailDTO();
+		EEdto.Id = newEvent.Id;
+		EEdto.Category = newEvent.Category;
+		EEdto.Name = newEvent.Name;
+		EEdto.Images = newEvent.Images;
+		EEdto.Description = newEvent.Description;
+		EEdto.Place = newEvent.Place;
+		EEdto.Date = newEvent.Date;
+		EEdto.Time = newEvent.Time;
+		EEdto.AdditionalInfo = newEvent.AdditionalInfo;
+		EEdto.UserEmail = userEmail;
+		EEdto.UserName = userName;
+
+		bool success = await ESUI.CreateEventAsync(EEdto);
+		
+		//bool success = await ESUI.CreateEventAsync(newEvent);
+
+		if (success)
+		{
+			newEvent = new(); // Очистка полей
+			await LoadEventAll();
+			StateHasChanged();
+		}
+		else
+		{
+			errorMessage = "Ошибка при добавлении события.";
+		}
+		// if (!string.IsNullOrEmpty(newEvent.Name))
+		// {
+		// 	bool success = await ESUI.CreateEventAsync(newEvent);
+
+		// 	if (success)
+		// 	{
+		// 		// Очистить форму после добавления
+		// 		newEvent = new();
+		// 		await LoadEventAll();
+		// 		StateHasChanged(); // Обновить UI
+		// 	}
+		// 	else
+		// 	{
+		// 		// Обработка ошибки, если нужно
+		// 		Console.WriteLine("Ошибка при добавлении события.");
+		// 	}
+		// }
 	}
 }

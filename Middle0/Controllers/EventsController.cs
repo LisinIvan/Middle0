@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Middle0.Application.Service.Interfaces;
 using Middle0.Domain.Entities;
+using Middle0.Domain.Common.DTO;
+using Middle0.Hangfire;
 
 namespace Middle0.Controllers
 {
@@ -15,6 +17,7 @@ namespace Middle0.Controllers
 
 		private readonly IEventService _eventService;
 		private readonly ILogger<EventsController> _logger;
+		HangfireEventTasks _hangfire = new HangfireEventTasks();
 
 		public EventsController(IEventService eventService, ILogger<EventsController> logger)
 		{
@@ -37,7 +40,7 @@ namespace Middle0.Controllers
 		[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
 		public async Task<ActionResult<Event>> GetById(int id)
 		{
-			var result = _eventService.GetEventById(id);
+			var result = await _eventService.GetEventById(id);
 			if (result == null)
 				return NotFound($"EventEntity with ID {id} not found.");
 			return Ok(result);
@@ -59,13 +62,26 @@ namespace Middle0.Controllers
 		// POST: api/Event
 		[HttpPost]
 		[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-		public async Task<IActionResult> Create([FromBody] Event entity)
+		public async Task<IActionResult> Create([FromBody] EventEmailDTO entity)
 		{
+			Event e = new Event();
+			e.Id = entity.Id;
+			e.Category = entity.Category;
+			e.Name = entity.Name;
+			e.Images = entity.Images;
+			e.Description = entity.Description;
+			e.Place = entity.Place;
+			e.Date = entity.Date;
+			e.Time = entity.Time;
+			e.AdditionalInfo = entity.AdditionalInfo;
 
-			bool added = await _eventService.AddEventEntity(entity);
+			bool added = await _eventService.AddEventEntity(e);
 
 			if (added)
+			{
+				await _hangfire.EventEmail(entity);
 				return Ok();
+			}
 
 			return Conflict(new { message = "Событие с таким именем уже существует" });
 		}

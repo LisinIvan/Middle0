@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Middle0.Application.Service;
@@ -14,6 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddHangfire(h => 
+h.UseSqlServerStorage("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=NotificationServiceDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+builder.Services.AddHangfireServer();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -23,6 +27,10 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+var mongoSection = builder.Configuration.GetSection("MongoDb");
+var mongoUrl = mongoSection["databaseUrl"];
+var collectionName = mongoSection["collectionName"];
 
 var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
 
@@ -61,8 +69,8 @@ builder.Services.AddControllers();
 
 Log.Logger = new LoggerConfiguration()
 	.WriteTo.MongoDB(
-		databaseUrl: "mongodb://localhost:8080/logs",  
-		collectionName: "logevents"                     
+		databaseUrl: mongoUrl,  
+		collectionName: collectionName                     
 	)
 	.Enrich.FromLogContext()
 	.Enrich.WithProperty("Application", "MyApp")          
@@ -99,6 +107,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseHangfireDashboard("/dashboard");
 
 app.MapControllers();
 
