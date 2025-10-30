@@ -17,12 +17,13 @@ namespace Middle0.Controllers
 
 		private readonly IEventService _eventService;
 		private readonly ILogger<EventsController> _logger;
-		HangfireEventTasks _hangfire = new HangfireEventTasks();
+		HangfireEventTasks _hangfire;
 
-		public EventsController(IEventService eventService, ILogger<EventsController> logger)
+		public EventsController(IEventService eventService, ILogger<EventsController> logger, HangfireEventTasks hangfire)
 		{
 			_eventService = eventService;
 			_logger = logger;
+			_hangfire = hangfire;
 		}
 
 		// GET: api/Event

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Middle0.Application.Service;
 using Middle0.Application.Service.Interfaces;
 using Middle0.Configuration;
+using Middle0.Domain.Common.DTO;
+using Middle0.Hangfire;
 using Middle0.Middlewares;
 using Middle0.Persistence.Context;
 using Middle0.Persistence.Repositories;
@@ -25,6 +27,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.Configure<EmailSettings>(
+	builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<HangfireEventTasks>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
