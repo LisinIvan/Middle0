@@ -19,15 +19,19 @@ namespace Middle0.Hangfire
 		}
 		public async Task EventEmail(EventEmailDTO entity)
 		{
+			string idHangFire = BackgroundJob.Schedule<HangfireEventTasks>(
+				x => x.SendEventEmail(entity),
+				entity.SendEmail - DateTime.Now);
+
 			/*BackgroundJob.Enqueue(
 			() => SendEventEmail(entity));*/
-			BackgroundJob.Enqueue<HangfireEventTasks>(x => x.SendEventEmail(entity));
+			//BackgroundJob.Enqueue<HangfireEventTasks>(x => x.SendEventEmail(entity));
 		}
 		public async Task SendEventEmail(EventEmailDTO entity)
 		{
 			var email = new MimeMessage();
 			email.From.Add(MailboxAddress.Parse(_emailSettings.From));
-			email.To.Add(MailboxAddress.Parse(entity.UserEmail)); 
+			email.To.Add(MailboxAddress.Parse(entity.UserEmail));
 			email.Subject = $"Уведомление о событии: {entity.Name}";
 			email.Body = new TextPart(TextFormat.Html)
 			{
@@ -39,6 +43,11 @@ namespace Middle0.Hangfire
 			await smtp.AuthenticateAsync(_emailSettings.From, _emailSettings.Password);
 			await smtp.SendAsync(email);
 			await smtp.DisconnectAsync(true);
+		}
+
+		public async Task UpdateDateSendEmail(DateTime date)
+		{
+			
 		}
 	}
 }

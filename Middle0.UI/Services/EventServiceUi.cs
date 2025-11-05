@@ -22,7 +22,7 @@ namespace Middle0.UI.Services
 			var response = await _httpClient.PostAsJsonAsync("api/events", ev);
 			return response.IsSuccessStatusCode;
 		}
-		public async Task<bool> UpdateEventAsync(int id, Event ev)
+		public async Task<bool> UpdateEventAsync(int id, EventEmailDTO ev)
 		{
 			var response = await _httpClient.PutAsJsonAsync($"api/events/{id}", ev);
 			return response.IsSuccessStatusCode;

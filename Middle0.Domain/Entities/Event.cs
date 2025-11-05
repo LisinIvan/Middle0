@@ -21,5 +21,7 @@ namespace Middle0.Domain.Entities
 		[DataType(DataType.Time)]
 		public TimeSpan Time { get; set; }
 		public string AdditionalInfo { get; set; } = null!;
+
+		public string jobId { get; set; }
 	}
 }

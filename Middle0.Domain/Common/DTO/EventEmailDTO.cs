@@ -20,5 +20,7 @@ namespace Middle0.Domain.Common.DTO
 		public string AdditionalInfo { get; set; } = null!;
 		public string UserEmail { get; set; }
 		public string UserName { get; set; }
+		public DateTime SendEmail { get; set; }
+		public string jobId { get; set; }
 	}
 }

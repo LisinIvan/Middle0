@@ -29,7 +29,7 @@ namespace Middle0.Controllers
 			if (existingUser != null)
 				return BadRequest(new { message = "A user with this email is already registered." });
 
-			var user = new IdentityUser { UserName = dto.Email, Email = dto.Email };
+			var user = new IdentityUser { UserName = dto.Username, Email = dto.Email };
 			var result = await _userManager.CreateAsync(user, dto.Password);
 
 			if (!result.Succeeded)

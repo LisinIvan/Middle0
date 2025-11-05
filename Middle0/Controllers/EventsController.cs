@@ -90,10 +90,23 @@ namespace Middle0.Controllers
 		// PUT: api/Event
 		[HttpPut("{id}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		public async Task<IActionResult> Update(int id, [FromBody] Event entity)
+		public async Task<IActionResult> Update(int id, [FromBody] EventEmailDTO entity)
 		{
+			Event e = new Event();
+			e.Id = entity.Id;
+			e.Category = entity.Category;
+			e.Name = entity.Name;
+			e.Images = entity.Images;
+			e.Description = entity.Description;
+			e.Place = entity.Place;
+			e.Date = entity.Date;
+			e.Time = entity.Time;
+			e.AdditionalInfo = entity.AdditionalInfo;
 
-			var success = await _eventService.UpdateEventEntity(entity);
+			DateTime dtSendEmail = entity.SendEmail;
+			await _hangfire.UpdateDateSendEmail(dtSendEmail);
+
+			var success = await _eventService.UpdateEventEntity(e);
 
 			if (!success)
 				return NotFound($"Событие с ID {entity.Id} не найдено или не удалось обновить.");
