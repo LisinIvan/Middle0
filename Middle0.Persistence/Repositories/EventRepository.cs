@@ -58,6 +58,7 @@ namespace Middle0.Persistence.Repositories
 				eventEntity.Date = entity.Date;
 				eventEntity.Time = entity.Time;
 				eventEntity.AdditionalInfo = entity.AdditionalInfo;
+				eventEntity.jobId = entity.jobId;
 				await _context.SaveChangesAsync();
 				return true;
 			}

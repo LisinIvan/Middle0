@@ -5,13 +5,16 @@ using Middle0.Application.Service;
 using Middle0.Application.Service.Interfaces;
 using Middle0.Configuration;
 using Middle0.Domain.Common.DTO;
-using Middle0.Hangfire;
+using Middle0.Application.Hangfire;
 using Middle0.Middlewares;
 using Middle0.Persistence.Context;
 using Middle0.Persistence.Repositories;
 using Middle0.Persistence.Repositories.Interfaces;
 using Middle0.Persistence.SeedData;
 using Serilog;
+using Middle0.Application.Mapping;
+using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +27,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITokenService, TokenService>();

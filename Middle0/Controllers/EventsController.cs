@@ -2,7 +2,7 @@
 using Middle0.Application.Service.Interfaces;
 using Middle0.Domain.Entities;
 using Middle0.Domain.Common.DTO;
-using Middle0.Hangfire;
+using Middle0.Application.Hangfire;
 
 namespace Middle0.Controllers
 {
@@ -28,7 +28,7 @@ namespace Middle0.Controllers
 
 		// GET: api/Event
 		[HttpGet]
-		[ProducesResponseType(typeof(List<Event>), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(List<EventDTO>), StatusCodes.Status200OK)]
 		public async Task<IActionResult> GetAll()
 		{
 
@@ -38,8 +38,8 @@ namespace Middle0.Controllers
 
 		//GET: api/Event/{id}}
 		[HttpGet("{id}")]
-		[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
-		public async Task<ActionResult<Event>> GetById(int id)
+		[ProducesResponseType(typeof(EventDTO), StatusCodes.Status200OK)]
+		public async Task<ActionResult<EventDTO>> GetById(int id)
 		{
 			var result = await _eventService.GetEventById(id);
 			if (result == null)
@@ -51,8 +51,8 @@ namespace Middle0.Controllers
 
 		// GET: api/Event/name/SomeName
 		[HttpGet("name/{name}")]
-		[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
-		public async Task<ActionResult<Event>> GetByName(string name)
+		[ProducesResponseType(typeof(EventDTO), StatusCodes.Status200OK)]
+		public async Task<ActionResult<EventDTO>> GetByName(string name)
 		{
 			var result = await _eventService.GetEventByNameAsync(name);
 			if (result == null)
@@ -63,24 +63,21 @@ namespace Middle0.Controllers
 		// POST: api/Event
 		[HttpPost]
 		[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-		public async Task<IActionResult> Create([FromBody] EventEmailDTO entity)
+		public async Task<IActionResult> Create([FromBody] EventDTO entityDTO)
 		{
-			Event e = new Event();
-			e.Id = entity.Id;
-			e.Category = entity.Category;
-			e.Name = entity.Name;
-			e.Images = entity.Images;
-			e.Description = entity.Description;
-			e.Place = entity.Place;
-			e.Date = entity.Date;
-			e.Time = entity.Time;
-			e.AdditionalInfo = entity.AdditionalInfo;
-
-			bool added = await _eventService.AddEventEntity(e);
+			bool added = await _eventService.AddEventEntity(entityDTO);
 
 			if (added)
 			{
-				await _hangfire.EventEmail(entity);
+				if (entityDTO.SendEmail != null)
+				{
+					string jobId = await _hangfire.EventEmail(entityDTO);
+
+					EventDTO updateEventDTO = await _eventService.GetEventByNameAsync(entityDTO.Name);
+					updateEventDTO.jobId = jobId;
+					await _eventService.UpdateEventEntity(updateEventDTO);
+				}
+
 				return Ok();
 			}
 
@@ -90,26 +87,25 @@ namespace Middle0.Controllers
 		// PUT: api/Event
 		[HttpPut("{id}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		public async Task<IActionResult> Update(int id, [FromBody] EventEmailDTO entity)
+		public async Task<IActionResult> Update(int id, [FromBody] EventDTO entityDTO)
 		{
-			Event e = new Event();
-			e.Id = entity.Id;
-			e.Category = entity.Category;
-			e.Name = entity.Name;
-			e.Images = entity.Images;
-			e.Description = entity.Description;
-			e.Place = entity.Place;
-			e.Date = entity.Date;
-			e.Time = entity.Time;
-			e.AdditionalInfo = entity.AdditionalInfo;
+			if (entityDTO.jobId != "0")
+			{
+				if (entityDTO.SendEmail != await _hangfire.GetDateJob(entityDTO.jobId))
+					entityDTO.jobId = await _hangfire.UpdateDateSendEmail(entityDTO);
+			}
+			else
+			{
+				if (entityDTO.SendEmail != null)
+					entityDTO.jobId = await _hangfire.EventEmail(entityDTO);
+			}
 
-			DateTime dtSendEmail = entity.SendEmail;
-			await _hangfire.UpdateDateSendEmail(dtSendEmail);
-
-			var success = await _eventService.UpdateEventEntity(e);
+			var success = await _eventService.UpdateEventEntity(entityDTO);
 
 			if (!success)
-				return NotFound($"Событие с ID {entity.Id} не найдено или не удалось обновить.");
+				return NotFound($"Событие с ID {entityDTO.Id} не найдено или не удалось обновить.");
+
+
 
 			return NoContent();
 
