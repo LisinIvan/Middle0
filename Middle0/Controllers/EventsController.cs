@@ -6,7 +6,6 @@ using Middle0.Application.Hangfire;
 
 namespace Middle0.Controllers
 {
-
 	[ApiController]
 	[Route("api/[controller]")]
 	[ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
@@ -14,7 +13,6 @@ namespace Middle0.Controllers
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public class EventsController : Controller
 	{
-
 		private readonly IEventService _eventService;
 		private readonly ILogger<EventsController> _logger;
 		HangfireEventTasks _hangfire;
@@ -45,8 +43,6 @@ namespace Middle0.Controllers
 			if (result == null)
 				return NotFound($"EventEntity with ID {id} not found.");
 			return Ok(result);
-
-
 		}
 
 		// GET: api/Event/name/SomeName
@@ -66,7 +62,6 @@ namespace Middle0.Controllers
 		public async Task<IActionResult> Create([FromBody] EventDTO entityDTO)
 		{
 			bool added = await _eventService.AddEventEntity(entityDTO);
-
 			if (added)
 			{
 				if (entityDTO.SendEmail != null)
@@ -77,10 +72,8 @@ namespace Middle0.Controllers
 					updateEventDTO.jobId = jobId;
 					await _eventService.UpdateEventEntity(updateEventDTO);
 				}
-
 				return Ok();
 			}
-
 			return Conflict(new { message = "Событие с таким именем уже существует" });
 		}
 
@@ -89,7 +82,7 @@ namespace Middle0.Controllers
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async Task<IActionResult> Update(int id, [FromBody] EventDTO entityDTO)
 		{
-			if (entityDTO.jobId != "0")
+			if (entityDTO.jobId != null)
 			{
 				if (entityDTO.SendEmail != await _hangfire.GetDateJob(entityDTO.jobId))
 					entityDTO.jobId = await _hangfire.UpdateDateSendEmail(entityDTO);
@@ -104,11 +97,7 @@ namespace Middle0.Controllers
 
 			if (!success)
 				return NotFound($"Событие с ID {entityDTO.Id} не найдено или не удалось обновить.");
-
-
-
 			return NoContent();
-
 		}
 
 		// DELETE: api/Event/{id}

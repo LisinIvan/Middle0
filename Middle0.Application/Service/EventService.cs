@@ -1,7 +1,6 @@
 ﻿
 using Middle0.Application.Service.Interfaces;
 using Middle0.Domain.Entities;
-using Middle0.Persistence.Repositories;
 using Middle0.Persistence.Repositories.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
@@ -43,8 +42,6 @@ namespace Middle0.Application.Service
 
 			await _eventRepository.AddEventEntity(entity);
 			return true;
-
-			//return await _eventRepository.AddEventEntity(entity);
 		}
 
 		public async Task<bool> DeleteEventEntity(int eventId)
@@ -69,7 +66,6 @@ namespace Middle0.Application.Service
 		{
 			return _mapper.Map<EventDTO>(await _eventRepository.GetEventEntitiesByNameAsync(name));
 		}
-
 		public async Task<bool> UpdateEventEntity(EventDTO entityDTO)
 		{
 			Event entity = _mapper.Map<Event>(entityDTO);

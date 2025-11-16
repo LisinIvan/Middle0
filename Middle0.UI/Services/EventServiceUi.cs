@@ -1,5 +1,4 @@
-﻿using Middle0.UI.Models;
-using Middle0.Domain.Common.DTO;
+﻿using Middle0.Domain.Common.DTO;
 using System.Net.Http.Json;
 
 namespace Middle0.UI.Services
@@ -7,7 +6,6 @@ namespace Middle0.UI.Services
 	public class EventServiceUi
 	{
 		private readonly HttpClient _httpClient;
-
 		public EventServiceUi(HttpClient httpClient)
 		{
 			_httpClient = httpClient;

@@ -7,9 +7,6 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h3>AllEvent</h3>
-
-
-
 <table class="table">
 	<thead>
 		<tr>
@@ -144,11 +141,10 @@
 @code {
 	private List<EventDTO> _eventDTO;
 	private string errorMessage;
-	private Event newEvent = new();
+	private EventDTO newEvent = new();
 	private string userName;
 	private string userEmail;
 	private DateTime? sendEmailDate = null;
-
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -245,8 +241,6 @@
 			errorMessage = "Название не может быть пустым.";
 			return;
 		}
-
-		// Проверки длины
 		if (newEvent.Name?.Length > 30)
 		{
 			errorMessage = "Название не может превышать 30 символов.";
@@ -268,28 +262,16 @@
 			return;
 		}
 
+		newEvent.UserName = userName;
+		newEvent.UserEmail = userEmail;
+		newEvent.jobId = "0";
 
-		EventDTO EEdto = new EventDTO();
-		EEdto.Id = newEvent.Id;
-		EEdto.Category = newEvent.Category;
-		EEdto.Name = newEvent.Name;
-		EEdto.Images = newEvent.Images;
-		EEdto.Description = newEvent.Description;
-		EEdto.Place = newEvent.Place;
-		EEdto.Date = newEvent.Date;
-		EEdto.Time = newEvent.Time;
-		EEdto.AdditionalInfo = newEvent.AdditionalInfo;
-		EEdto.UserEmail = userEmail;
-		EEdto.UserName = userName;
-		EEdto.jobId = "0";
 		if (sendEmailDate==null)
-			EEdto.SendEmail = null;
+			newEvent.SendEmail = null;
 		else
-			EEdto.SendEmail = sendEmailDate;
+			newEvent.SendEmail = sendEmailDate;
 
-		bool success = await ESUI.CreateEventAsync(EEdto);
-		
-		//bool success = await ESUI.CreateEventAsync(newEvent);
+		bool success = await ESUI.CreateEventAsync(newEvent);
 
 		if (success)
 		{
@@ -303,22 +285,5 @@
 		{
 			errorMessage = "Ошибка при добавлении события.";
 		}
-		// if (!string.IsNullOrEmpty(newEvent.Name))
-		// {
-		// 	bool success = await ESUI.CreateEventAsync(newEvent);
-
-		// 	if (success)
-		// 	{
-		// 		// Очистить форму после добавления
-		// 		newEvent = new();
-		// 		await LoadEventAll();
-		// 		StateHasChanged(); // Обновить UI
-		// 	}
-		// 	else
-		// 	{
-		// 		// Обработка ошибки, если нужно
-		// 		Console.WriteLine("Ошибка при добавлении события.");
-		// 	}
-		// }
 	}
 }

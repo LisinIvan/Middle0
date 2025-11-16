@@ -12,12 +12,11 @@ namespace Middle0.Application.Hangfire
 	public class HangfireEventTasks
 	{
 		private readonly EmailSettings _emailSettings;
-
 		public HangfireEventTasks(IOptions<EmailSettings> emailSettings)
 		{
 			_emailSettings = emailSettings.Value;
 		}
-		public async Task<string> EventEmail(EventDTO entityDTO)
+		public async Task<string?> EventEmail(EventDTO entityDTO)
 		{
 			if (entityDTO.SendEmail!=null)
 			{
@@ -38,7 +37,6 @@ namespace Middle0.Application.Hangfire
 			{
 				Text = $"<h3>Hi !</h3><p> You create  <b>{entityDTO.Name}</b>, Place {entityDTO.Place}.</p>"
 			};
-
 			using var smtp = new SmtpClient();
 			await smtp.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.Port, SecureSocketOptions.SslOnConnect);
 			await smtp.AuthenticateAsync(_emailSettings.From, _emailSettings.Password);
@@ -48,7 +46,6 @@ namespace Middle0.Application.Hangfire
 
 		public async Task<string> UpdateDateSendEmail(EventDTO entityDTO)
 		{
-
 			DeleteJobById(entityDTO.jobId);
 			return await EventEmail(entityDTO);
 		}
@@ -66,7 +63,6 @@ namespace Middle0.Application.Hangfire
 			{
 				return job.Value.EnqueueAt;
 			}
-
 			return null;
 		}
 	}
