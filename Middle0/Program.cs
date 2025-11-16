@@ -21,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddHangfire(h => 
-h.UseSqlServerStorage("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=NotificationServiceDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+h.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnectionHangFire")));
 builder.Services.AddHangfireServer();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
