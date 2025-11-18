@@ -46,7 +46,7 @@ namespace Middle0.Application.Hangfire
 
 		public async Task<string> UpdateDateSendEmail(EventDTO entityDTO)
 		{
-			DeleteJobById(entityDTO.jobId);
+			DeleteJobById(entityDTO.JobId);
 			return await EventEmail(entityDTO);
 		}
 		public void DeleteJobById(string jobId)

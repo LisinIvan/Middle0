@@ -69,7 +69,7 @@ namespace Middle0.Controllers
 					string jobId = await _hangfire.EventEmail(entityDTO);
 
 					EventDTO updateEventDTO = await _eventService.GetEventByNameAsync(entityDTO.Name);
-					updateEventDTO.jobId = jobId;
+					updateEventDTO.JobId = jobId;
 					await _eventService.UpdateEventEntity(updateEventDTO);
 				}
 				return Ok();
@@ -82,15 +82,15 @@ namespace Middle0.Controllers
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		public async Task<IActionResult> Update(int id, [FromBody] EventDTO entityDTO)
 		{
-			if (entityDTO.jobId != null)
+			if (entityDTO.JobId != null)
 			{
-				if (entityDTO.SendEmail != await _hangfire.GetDateJob(entityDTO.jobId))
-					entityDTO.jobId = await _hangfire.UpdateDateSendEmail(entityDTO);
+				if (entityDTO.SendEmail != await _hangfire.GetDateJob(entityDTO.JobId))
+					entityDTO.JobId = await _hangfire.UpdateDateSendEmail(entityDTO);
 			}
 			else
 			{
 				if (entityDTO.SendEmail != null)
-					entityDTO.jobId = await _hangfire.EventEmail(entityDTO);
+					entityDTO.JobId = await _hangfire.EventEmail(entityDTO);
 			}
 
 			var success = await _eventService.UpdateEventEntity(entityDTO);

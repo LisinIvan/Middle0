@@ -22,6 +22,6 @@ namespace Middle0.Domain.Entities
 		public TimeSpan Time { get; set; }
 		public string AdditionalInfo { get; set; } = null!;
 
-		public string jobId { get; set; }
+		public string JobId { get; set; }
 	}
 }

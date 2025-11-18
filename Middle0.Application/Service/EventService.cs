@@ -56,7 +56,7 @@ namespace Middle0.Application.Service
 			EventDTO eDTO = null;
 			foreach (var entity in eventList) {
 				eDTO = _mapper.Map<EventDTO>(entity);
-				eDTO.SendEmail = await _hangfire.GetDateJob(entity.jobId);
+				eDTO.SendEmail = await _hangfire.GetDateJob(entity.JobId);
 				resultDTO.Add(eDTO);
 			}
 			return resultDTO;

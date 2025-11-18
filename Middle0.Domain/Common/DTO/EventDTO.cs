@@ -21,6 +21,6 @@ namespace Middle0.Domain.Common.DTO
 		public string UserEmail { get; set; }
 		public string UserName { get; set; }
 		public DateTime? SendEmail { get; set; } = null;
-		public string jobId { get; set; }
+		public string JobId { get; set; }
 	}
 }

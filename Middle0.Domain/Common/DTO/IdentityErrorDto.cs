@@ -8,7 +8,7 @@ namespace Middle0.Domain.Common.DTO
 {
 	public class IdentityErrorDto
 	{
-		public string code { get; set; }
-		public string description { get; set; }
+		public string Code { get; set; }
+		public string Description { get; set; }
 	}
 }

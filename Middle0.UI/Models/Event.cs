@@ -21,6 +21,6 @@ namespace Middle0.UI.Models
 		[DataType(DataType.Time)]
 		public TimeSpan Time { get; set; }
 		public string AdditionalInfo { get; set; } = null!;
-		public string jobId { get; set; }
+		public string JobId { get; set; }
 	}
 }
